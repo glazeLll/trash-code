@@ -13,7 +13,7 @@ int randNum()
     return num = rand() % 20;
 }
 void showStdout(char *file)
-{
+
     int c = open(file, O_RDONLY), rd;
     for (int i = 0; i < 10; i++)
     {
