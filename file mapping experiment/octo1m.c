@@ -32,6 +32,7 @@ void showStdout(char *file)
     {
         printf("|%d|", rd);
     }
+      printf("\n");
     close(c);
 }
 int main(int argc, char *argv[])
@@ -41,6 +42,7 @@ int main(int argc, char *argv[])
     off_t len;
     int *map;
     int fd, pgSize, sz;
+    int countOdd = 0, save[countOdd];
     char ch[] = "intemap.txt";
     fd = open(ch, O_RDWR | O_CREAT | O_TRUNC, 0777);
     if (fd == 1)
@@ -51,15 +53,21 @@ int main(int argc, char *argv[])
     for (int i = 0; i < 10; i++)
     {
         int a = rand() % 20;
+        if (a % 2 != 0)
+        {
+            save[countOdd] = a;
+            countOdd++;
+        }
         write(fd, &a, sizeof(int));
     }
+    printf("current content in file:");
+    showStdout(ch);
+    ftruncate(fd, sizeof(int) * countOdd);/////change file size
     if (fstat(fd, &sta) == 1)
     {
         perror("fstat");
         return 1;
     }
-    printf("current content in file:");
-    showStdout(ch);
     if (!S_ISREG(sta.st_mode))
     {
         fprintf(stderr, "%s is not a file n", "fi.txt");
@@ -79,19 +87,11 @@ int main(int argc, char *argv[])
         perror("close");
         return 1;
     }
-    int cpy[sz /4], count = 0;
-    for (int i = 0; i < sz / sizeof(int); i++)
-    {
-        if (map[i] % 2 != 0)
-        {
-            cpy[count] = map[i];
-            count++;
-        }
-    }
-    memset(map,0,sz);
-    memcpy(map,cpy,sizeof(int)*(count));
-    munmap(map,sz);
-    printf("\nnow content in file:");showStdout(ch);
+    memset(map, '\0', sz);
+    memcpy(map, save, sizeof(int) * (countOdd));
+    munmap(map, sz);
+    printf("now content in file:");
+    showStdout(ch);
 }
 
 /*int main()
