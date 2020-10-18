@@ -19,18 +19,20 @@ struct compx
    c.re=cos(i);
    c.im=sin(i);
 }*/
-void createReadable(char*file){
+void createReadable(char *file)
+{
 
-    int f1,f2;
+    int f1, f2;
     char ma[] = "readCmat.txt", inte[25];
-    f1=open(file,O_RDONLY);
+    f1 = open(file, O_RDONLY);
     f2 = open(ma, O_CREAT | O_RDWR | O_TRUNC, 0644);
+    lseek(f1, 2 * sizeof(int), SEEK_SET);
     struct compx c;
     for (int m = 1; m <= 10; m++)
     {
         for (int n = 1; n <= 10; n++)
         {
-            read(f1,&c,sizeof(struct compx));
+            read(f1, &c, sizeof(struct compx));
             sprintf(inte, "%5.3lf+%5.3lfi", c.re, c.im);
             write(f2, inte, strlen(inte));
             if (n == 10 && m != 10)
@@ -42,37 +44,49 @@ void createReadable(char*file){
     close(f1);
     close(f2);
 }
-void showStdout(char*file){
+void showStdout(char *file)
+{
 
     int f1;
-    f1=open(file,O_RDONLY);
+    f1 = open(file, O_RDONLY);
+    lseek(f1, 2 * sizeof(int), SEEK_SET);
     struct compx c;
     for (int m = 1; m <= 10; m++)
     {
         for (int n = 1; n <= 10; n++)
         {
-            read(f1,&c,sizeof(struct compx));
+            read(f1, &c, sizeof(struct compx));
             printf("%5.3lf+%5.3lfi", c.re, c.im);
             if (n == 10 && m != 10)
-              printf("\n");
+                printf("\n");
             else if (n != 10)
-               printf(" ");
+                printf(" ");
         }
     }
     close(f1);
+}
+void wrRowInfo(int file, int row)
+{
+    write(file, &row, sizeof(int));
+}
+void wrColumnInfo(int file, int column)
+{
+    write(file, &column, sizeof(int));
 }
 int main()
 {
     int f1;
     char ma[] = "Cmatrix.txt", inte[25];
-    f1 = open(ma, O_CREAT | O_RDWR|O_TRUNC, 0644);
+    f1 = open(ma, O_CREAT | O_RDWR | O_TRUNC, 0644);
     struct compx c;
+    wrRowInfo(f1, 10);
+    wrColumnInfo(f1, 10);
     for (int m = 1; m <= 10; m++)
     {
         for (int n = 1; n <= 10; n++)
         {
-            c.re= cos(M_PI/m)+cos(M_PI/n);//(c=e^iπ/m+e^iπ/n)
-            c.im=sin(M_PI/m)+sin(M_PI/n);
+            c.re = cos(M_PI / m) + cos(M_PI / n); //(c=e^iπ/m+e^iπ/n)
+            c.im = sin(M_PI / m) + sin(M_PI / n);
             write(f1, &c, sizeof(c));
         }
     }

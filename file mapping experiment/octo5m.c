@@ -13,8 +13,9 @@ int randNum()
     return num = rand() % 20;
 }
 void showStdout(char *file)
-
+{
     int c = open(file, O_RDONLY), rd;
+    lseek(c, 2 * sizeof(int), SEEK_SET);
     for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
@@ -42,7 +43,7 @@ int main()
     fstat(f1,&sta);
     size=sta.st_size;
     map=(int*)mmap(0,size,PROT_READ,MAP_SHARED,f1,0);
-    int q=0;
+    int q=2;
      close(f1);
     for (i=0; i < 10; i++)
     {

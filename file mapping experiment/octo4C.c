@@ -13,6 +13,7 @@ int randNum()
 void showStdout(char *file)
 {
     int c = open(file, O_RDONLY), rd;
+    lseek(c, 2 * sizeof(int), SEEK_SET);
     for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
@@ -34,6 +35,7 @@ int main()
     if ((f1 = open(ma, O_RDONLY, 0644)) == -1)
         printf("error");
     showStdout(ma);
+    lseek(f1, 2 * sizeof(int), SEEK_SET);
     printf("\n upper diagonal elements:\n");
     int a;
     for (i = 0; i < 10; i++)

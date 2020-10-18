@@ -24,7 +24,8 @@ void generateMat100(int a[10][10])
 void createReadable(char *file)
 {
     int f1 = open(file, O_RDONLY, 0644);
-    int file2 = open("readImatMap.txt", O_CREAT | O_RDWR | O_TRUNC, 0644);
+    int file2 = open("readImatMap.txt", O_CREAT | O_RDWR | O_TRUNC, 0777);
+    lseek(f1, 2 * sizeof(int), SEEK_SET);
     char inte[10];
     int a;
     for (int i = 0; i < 10; i++)
@@ -32,7 +33,7 @@ void createReadable(char *file)
         for (int j = 0; j < 10; j++)
         {
             read(f1, &a, sizeof(int));
-            sprintf(inte, "%3ld", a);
+            sprintf(inte, "%3d", a);
             write(file2, inte, strlen(inte));
             if (j == 9 && i != 9)
                 write(file2, "\n", 1);
@@ -45,7 +46,8 @@ void createReadable(char *file)
 }
 void showStdout(char *file)
 {
-    int c = open(file, O_RDONLY), rd;
+    int c = open(file, O_RDONLY, 0644), rd;
+    lseek(c, 2 * sizeof(int), SEEK_SET);
     for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
@@ -60,6 +62,14 @@ void showStdout(char *file)
     }
     close(c);
 }
+void wrRowInfo(int file, int row)
+{
+    write(file, &row, sizeof(int));
+}
+void wrColumnInfo(int file, int column)
+{
+    write(file, &column, sizeof(int));
+}
 int main()
 {
     struct stat sta;
@@ -68,7 +78,9 @@ int main()
     int f1, a[10][10], i = 0, j = 0, pgSize;
     char ma[] = "Imatrixmap.txt";
     f1 = open(ma, O_CREAT | O_RDWR | O_TRUNC, 0644);
-    lseek(f1,sizeof(int)*100-1, SEEK_SET);
+    wrRowInfo(f1,10);
+    wrColumnInfo(f1,10);
+    lseek(f1,sizeof(int)*100-1, SEEK_CUR);
     write(f1, "", 1);
     lseek(f1, 0, SEEK_SET);
     generateMat100(a);
@@ -77,7 +89,9 @@ int main()
     size = sta.st_size;
     map = (int *)mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, f1, 0);
     close(f1);
-    memcpy(map, a, 400);
+    memcpy(map+2, a, 400);
+    munmap(map,size);
     createReadable(ma);
     showStdout(ma);
+    
 }

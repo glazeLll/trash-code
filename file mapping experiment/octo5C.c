@@ -16,7 +16,7 @@ void createWithTrace(char*file)
         for (int j = 0; j < 10; j++)
            {
                read(f1,&a,sizeof(int));
-               sprintf(inte,"%3ld",a);
+               sprintf(inte,"%3d",a);
                write(file2,inte,strlen(inte));
                if(j==9&&i!=9)
                write(file2,"\n",1);
@@ -25,7 +25,7 @@ void createWithTrace(char*file)
            }
     }
     write(file2,"\n",1);
-     sprintf(inte,"%4ld",a);
+     sprintf(inte,"%4d",a);
     write(file2,"trace=",6);
       write(file2,inte,strlen(inte));
     close(f1);
@@ -35,6 +35,7 @@ void stdoutMat(char*file){
 
       int f1 = open(file, O_RDONLY, 0644);
      int a;
+     lseek(f1,2*sizeof(int),SEEK_SET);
     for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
@@ -55,7 +56,7 @@ int main()
   char ma[] = "Imatrix.txt";
   if ((f1 = open(ma, O_CREAT | O_RDONLY, 0644)) == -1)
     printf("error");
-  
+  lseek(f1,2*sizeof(int),SEEK_SET);
   for (i=0; i < 10; i++)
     {
         for (j=0; j < 10; j++)
@@ -67,4 +68,5 @@ int main()
     }
     stdoutMat(ma);
   printf("\ntrace=%d",trace);
+  close(f1);
 }
