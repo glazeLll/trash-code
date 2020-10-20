@@ -1,2 +1,6 @@
 99.8%/100%
-banzai!!!!!!
+banzai!!!!!! C read&write m mmap style
+the first program remove the even numbers from a file
+the second and third programs will create a file stroes matrix elements.
+fourth print the upper diagonal elements
+fifth calculate the trace of a matrix.
